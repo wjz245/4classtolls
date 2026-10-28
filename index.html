@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常用工具下载站 | JiYuTrainer & PCL2</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        /* Subtle animated background blobs */
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.35; }
+            50% { transform: scale(1.08) translate(15px, -15px); opacity: 0.5; }
+        }
+        .animate-blob {
+            animation: pulse-slow 10s infinite ease-in-out;
+        }
+        .animation-delay-2000 {
+            animation-delay: 3s;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+
+    <!-- Decorative Ambient Background Glow -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl animate-blob"></div>
+        <div class="absolute top-1/3 -right-32 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl animate-blob"></div>
+    </div>
+
+    <!-- Top Status & Telemetry Bar -->
+    <header class="relative z-10 border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl sticky top-0">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row items-center justify-between gap-3">
+            <!-- Brand / Site Title -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                        <i class="fa-solid fa-cloud-arrow-down text-white text-base"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-base tracking-tight text-white block leading-none">极速资源站</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Clock & IP Widget -->
+            <div class="flex flex-wrap items-center justify-center sm:justify-end gap-2.5 w-full md:w-auto">
+                <!-- Real-Time Clock Pill -->
+                <div class="flex items-center gap-2.5 bg-slate-950/80 border border-slate-800/90 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm shadow-inner">
+                    <i class="fa-regular fa-clock text-indigo-400"></i>
+                    <span id="current-date" class="text-slate-300 font-medium">--年--月--日</span>
+                    <span class="text-slate-700">|</span>
+                    <span id="current-time" class="font-mono font-semibold text-indigo-400 tracking-wider">00:00:00</span>
+                </div>
+
+                <!-- Public IP Display Pill -->
+                <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800/90 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm shadow-inner">
+                    <i class="fa-solid fa-network-wired text-emerald-400"></i>
+                    <span class="text-slate-400 hidden sm:inline">当前 IP:</span>
+                    <span id="ip-address" class="font-mono font-semibold text-emerald-400">正在获取...</span>
+                    <span id="ip-location" class="text-xs text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md hidden"></span>
+                    
+                    <!-- Copy IP Button -->
+                    <button onclick="copyIP()" class="text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800 transition" title="复制 IP 地址">
+                        <i class="fa-regular fa-copy text-xs"></i>
+                    </button>
+                    <!-- Refresh IP Button -->
+                    <button onclick="fetchIPInfo(true)" class="text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800 transition" title="重新检测 IP">
+                        <i id="ip-refresh-icon" class="fa-solid fa-rotate-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex-grow w-full flex flex-col justify-center">
+        
+        <!-- Hero Banner -->
+        <div class="text-center mb-10 sm:mb-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+                工具
+            </h1>
+        </div>
+
+        <!-- Two Download Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            
+            <!-- Card 1: JiYuTrainer -->
+            <div class="group relative bg-slate-900/70 backdrop-blur-xl border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-6 sm:p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 flex flex-col justify-between">
+                <div>
+                    <!-- Card Header -->
+                    <div class="flex items-start justify-between gap-4 mb-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-105 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-indigo-500/10">
+                                <i class="fa-solid fa-desktop text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-xl font-bold text-white">JiYuTrainer</h2>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">机房辅助</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-400 mt-1">极域电子教室辅助与窗口化工具</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        专为极域电子教室设计的轻量级辅助工具，支持解除全屏广播限制、窗口化广播画面、恢复任务栏与快捷键控制，绿色免安装即开即用。
+                    </p>
+
+                    <!-- Link & Password Info Box -->
+                    <div class="bg-slate-950/90 border border-slate-800/90 rounded-xl p-4 mb-6 space-y-3">
+                        <div class="flex items-center justify-between text-xs sm:text-sm">
+                            <span class="text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-link text-slate-500"></i> 下载节点
+                            </span>
+                            <a href="https://wwboc.lanzoum.com/im05d1zuwxda" target="_blank" rel="noopener noreferrer" class="font-mono text-indigo-400 hover:underline truncate max-w-[210px] sm:max-w-[260px]">
+                                wwboc.lanzoum.com/im05d1zuwxda
+                            </a>
+                        </div>
+                        <div class="border-t border-slate-800/80 pt-3 flex items-center justify-between">
+                            <span class="text-slate-400 text-xs sm:text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-key text-amber-400"></i> 蓝奏云提取码
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <code class="px-3 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 font-mono font-bold text-base tracking-wider select-all">9qbc</code>
+                                <button onclick="copyText('9qbc', 'JiYuTrainer 提取码 9qbc 已复制到剪贴板！')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition flex items-center gap-1 border border-slate-700">
+                                    <i class="fa-regular fa-copy"></i> 复制密码
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="copyAndDownload('9qbc', 'https://wwboc.lanzoum.com/im05d1zuwxda', 'JiYuTrainer')" class="flex-1 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>复制密码并前往下载</span>
+                    </button>
+                    <a href="https://wwboc.lanzoum.com/im05d1zuwxda" target="_blank" rel="noopener noreferrer" class="sm:w-auto bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white font-medium py-3 px-4 rounded-xl border border-slate-700/80 transition flex items-center justify-center gap-1.5 text-sm">
+                        <span>直达链接</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 2: PCL Old Version -->
+            <div class="group relative bg-slate-900/70 backdrop-blur-xl border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-6 sm:p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between">
+                <div>
+                    <!-- Card Header -->
+                    <div class="flex items-start justify-between gap-4 mb-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-105 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-emerald-500/10">
+                                <i class="fa-solid fa-cubes text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-xl font-bold text-white">PCL 启动器老版</h2>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MC 经典版</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-400 mt-1">Plain Craft Launcher 经典怀旧版本</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        深受玩家喜爱的 Minecraft 启动器经典老版本，界面清爽流畅、占用内存极低，兼容老旧系统环境与各类经典整合包、Mod 高速下载。
+                    </p>
+
+                    <!-- Link & Password Info Box -->
+                    <div class="bg-slate-950/90 border border-slate-800/90 rounded-xl p-4 mb-6 space-y-3">
+                        <div class="flex items-center justify-between text-xs sm:text-sm">
+                            <span class="text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-link text-slate-500"></i> 下载节点
+                            </span>
+                            <a href="https://wwboc.lanzoum.com/icOlb4dsbmih" target="_blank" rel="noopener noreferrer" class="font-mono text-emerald-400 hover:underline truncate max-w-[210px] sm:max-w-[260px]">
+                                wwboc.lanzoum.com/icOlb4dsbmih
+                            </a>
+                        </div>
+                        <div class="border-t border-slate-800/80 pt-3 flex items-center justify-between">
+                            <span class="text-slate-400 text-xs sm:text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-key text-amber-400"></i> 蓝奏云提取码
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <code class="px-3 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono font-bold text-base tracking-wider select-all">4ck4</code>
+                                <button onclick="copyText('4ck4', 'PCL 老版提取码 4ck4 已复制到剪贴板！')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition flex items-center gap-1 border border-slate-700">
+                                    <i class="fa-regular fa-copy"></i> 复制密码
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="copyAndDownload('4ck4', 'https://wwboc.lanzoum.com/icOlb4dsbmih', 'PCL老版')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>复制密码并前往下载</span>
+                    </button>
+                    <a href="https://wwboc.lanzoum.com/icOlb4dsbmih" target="_blank" rel="noopener noreferrer" class="sm:w-auto bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white font-medium py-3 px-4 rounded-xl border border-slate-700/80 transition flex items-center justify-center gap-1.5 text-sm">
+                        <span>直达链接</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Quick Tips Banner -->
+        <div class="mt-8 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 sm:px-6 flex items-center justify-center sm:justify-start gap-3 text-xs sm:text-sm text-slate-400">
+            <i class="fa-solid fa-circle-info text-indigo-400 text-base"></i>
+            <span>温馨提示：进入蓝奏云页面后，直接按 <kbd class="px-1.5 py-0.5 bg-slate-800 text-slate-200 rounded border border-slate-700 font-mono text-xs">Ctrl + V</kbd> 粘贴刚才自动复制的密码即可下载。</span>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-slate-900 bg-slate-950/80 py-5 text-center text-xs text-slate-500">
+        <div class="max-w-5xl mx-auto px-4 flex items-center justify-center">
+            <p>所有文件均托管于蓝奏云网盘，仅作学习与交流使用</p>
+        </div>
+    </footer>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900/95 backdrop-blur-md border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm">
+        <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+            <i class="fa-solid fa-check text-sm"></i>
+        </div>
+        <span id="toast-message" class="text-xs sm:text-sm font-medium leading-snug">操作成功</span>
+    </div>
+
+    <!-- Core Application Script -->
+    <script>
+        // 1. Real-Time Clock Function (Updates every second)
+        function updateClock() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            const weekDay = weekDays[now.getDay()];
+
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById('current-date').textContent = `${year}-${month}-${day} ${weekDay}`;
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Start clock immediately
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // 2. Multi-Fallback Public IP Detection (Works reliably in China & Globally on GitHub Pages)
+        let currentIP = '';
+
+        async function fetchWithTimeout(url, timeout = 4000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeout);
+            try {
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timer);
+                if (!response.ok) throw new Error('Network response was not ok');
+                return await response.json();
+            } catch (err) {
+                clearTimeout(timer);
+                throw err;
+            }
+        }
+
+        async function fetchIPInfo(isManualRefresh = false) {
+            const ipEl = document.getElementById('ip-address');
+            const locEl = document.getElementById('ip-location');
+            const refreshIcon = document.getElementById('ip-refresh-icon');
+
+            ipEl.textContent = '检测中...';
+            locEl.classList.add('hidden');
+            refreshIcon.classList.add('fa-spin');
+
+            // Fallback APIs ordered for high availability
+            const endpoints = [
+                {
+                    url: 'https://ipapi.co/json/',
+                    parse: (data) => ({
+                        ip: data.ip,
+                        loc: [data.country_name, data.city].filter(Boolean).join(' ')
+                    })
+                },
+                {
+                    url: 'https://api.ip.sb/geoip',
+                    parse: (data) => ({
+                        ip: data.ip,
+                        loc: [data.country, data.isp].filter(Boolean).join(' · ')
+                    })
+                },
+                {
+                    url: 'https://api.ipify.org?format=json',
+                    parse: (data) => ({
+                        ip: data.ip,
+                        loc: ''
+                    })
+                },
+                {
+                    url: 'https://ipinfo.io/json',
+                    parse: (data) => ({
+                        ip: data.ip,
+                        loc: [data.country, data.region].filter(Boolean).join(' ')
+                    })
+                }
+            ];
+
+            let success = false;
+
+            for (const endpoint of endpoints) {
+                try {
+                    const data = await fetchWithTimeout(endpoint.url, 3800);
+                    const result = endpoint.parse(data);
+                    if (result && result.ip) {
+                        currentIP = result.ip;
+                        ipEl.textContent = result.ip;
+                        if (result.loc) {
+                            locEl.textContent = result.loc;
+                            locEl.classList.remove('hidden');
+                        }
+                        success = true;
+                        break;
+                    }
+                } catch (e) {
+                    // Continue to next fallback API
+                }
+            }
+
+            if (!success) {
+                ipEl.textContent = '获取失败 (点击重试)';
+            } else if (isManualRefresh) {
+                showToast(`IP 已刷新: ${currentIP}`);
+            }
+
+            refreshIcon.classList.remove('fa-spin');
+        }
+
+        // 3. Clipboard Helper (Supports iframe & standard browsers without alert)
+        function copyToClipboard(text) {
+            return new Promise((resolve) => {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(() => resolve(true)).catch(() => {
+                        fallbackCopy(text);
+                        resolve(true);
+                    });
+                } else {
+                    fallbackCopy(text);
+                    resolve(true);
+                }
+            });
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Copy arbitrary text with toast notification
+        async function copyText(text, message) {
+            await copyToClipboard(text);
+            showToast(message || `已复制: ${text}`);
+        }
+
+        // Copy current IP address
+        function copyIP() {
+            if (!currentIP) {
+                showToast('尚未获取到有效 IP 地址');
+                return;
+            }
+            copyText(currentIP, `当前 IP (${currentIP}) 已复制到剪贴板！`);
+        }
+
+        // Copy Password and Open Lanzou Link
+        async function copyAndDownload(password, url, appName) {
+            await copyToClipboard(password);
+            showToast(`${appName} 密码 [${password}] 已复制，正在打开下载页...`);
+            setTimeout(() => {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }, 350);
+        }
+
+        // 4. Toast Notification Controller
+        let toastTimeout = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.textContent = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3200);
+        }
+
+        // Initialize IP Detection on Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchIPInfo(false);
+        });
+    </script>
+</body>
+</html>
